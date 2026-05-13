@@ -4,6 +4,7 @@ Shader "Custom/Test"
     {
         [MainColor] _BaseColor("Base Color", Color) = (1, 1, 1, 1)
         [MainTexture] _BaseMap("Base Map", 2D) = "white" {}
+        _Size("Size", Float) = 10.0
         _Seed("Seed", Float) = 0.0
     }
 
@@ -40,6 +41,7 @@ Shader "Custom/Test"
             CBUFFER_START(UnityPerMaterial)
                 half4 _BaseColor;
                 float4 _BaseMap_ST;
+                float _Size;
                 float _Seed;
             CBUFFER_END
 
@@ -53,7 +55,13 @@ Shader "Custom/Test"
 
             half4 frag(Varyings IN) : SV_Target
             {
-                float noise = perlinNoise(IN.uv * 10.0, _Seed); // ノイズを0〜1の範囲に変換
+                // float noise = perlinNoise(IN.uv * 10.0, _Seed);
+
+                float noise = voronoi(IN.uv * _Size, _Seed);
+
+                // float noise = voronoi2(IN.uv * _Size, _Seed) - voronoi(IN.uv * _Size, _Seed);
+                // noise = smoothstep(0.0, 0.1, noise);
+                // noise = step(0.5, noise);
                 float4 color = float4(noise, noise, noise, 1.0) * _BaseColor;
                 return color;
             }

@@ -3,6 +3,9 @@
 
     #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
+    #define Deg2Rad 0.0174532924
+    #define Rad2Deg 57.2957795
+
     // Your shader code here
     // 乱数生成
     float hash(float2 p) {
@@ -36,5 +39,45 @@
 
         return lerp(lerp(a, b, u.x), lerp(c, d, u.x), u.y);
 
+    }
+
+    float voronoi(float2 pixel, float seed) {
+        float2 i = floor(pixel);
+        float2 f = frac(pixel);
+
+        float minDist = 100.0;
+        for (int y = -1; y <= 1; y++) {
+            for (int x = -1; x <= 1; x++) {
+                float2 neighbor = i + float2(x, y);
+                float2 p = float2(random(neighbor, seed), random(neighbor, seed + 1.0)) + neighbor;
+                float dist = length(p - pixel);
+                minDist = min(minDist, dist);
+            }
+        }
+        return minDist;
+    }
+
+    // 2番目に近い点との距離
+    float voronoi2(float2 pixel, float seed) {
+        float2 i = floor(pixel);
+        float2 f = frac(pixel);
+
+        float minDist1 = 100.0;
+        float minDist2 = 100.0;
+        for (int y = -1; y <= 1; y++) {
+            for (int x = -1; x <= 1; x++) {
+                float2 neighbor = i + float2(x, y);
+                float2 p = float2(random(neighbor, seed), random(neighbor, seed + 1.0)) + neighbor;
+                float dist = length(p - pixel);
+                if (dist < minDist1) {
+                    minDist2 = minDist1;
+                    minDist1 = dist;
+                }
+                else if (dist < minDist2) {
+                    minDist2 = dist;
+                }
+            }
+        }
+        return minDist2;
     }
 #endif // GOROHS_INCLUDE
