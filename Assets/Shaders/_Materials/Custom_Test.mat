@@ -29,8 +29,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Seed: 7.02
-    - _Size: 9.47
+    - _Edge: 0.95
+    - _Seed: 15.5
+    - _Size: 8.63
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

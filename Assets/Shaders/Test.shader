@@ -5,6 +5,7 @@ Shader "Custom/Test"
         [MainColor] _BaseColor("Base Color", Color) = (1, 1, 1, 1)
         [MainTexture] _BaseMap("Base Map", 2D) = "white" {}
         _Size("Size", Float) = 10.0
+        _Edge("Edge", Float) = 0.1
         _Seed("Seed", Float) = 0.0
     }
 
@@ -42,6 +43,7 @@ Shader "Custom/Test"
                 half4 _BaseColor;
                 float4 _BaseMap_ST;
                 float _Size;
+                float _Edge;
                 float _Seed;
             CBUFFER_END
 
@@ -57,11 +59,14 @@ Shader "Custom/Test"
             {
                 // float noise = perlinNoise(IN.uv * 10.0, _Seed);
 
-                float noise = voronoi(IN.uv * _Size, _Seed);
+                // float noise = voronoi(IN.uv * _Size, _Seed);
 
                 // float noise = voronoi2(IN.uv * _Size, _Seed) - voronoi(IN.uv * _Size, _Seed);
                 // noise = smoothstep(0.0, 0.1, noise);
                 // noise = step(0.5, noise);
+
+                float noise = voronoiEdgeRatio(IN.uv * _Size);
+                noise = step(_Edge, noise);
                 float4 color = float4(noise, noise, noise, 1.0) * _BaseColor;
                 return color;
             }
